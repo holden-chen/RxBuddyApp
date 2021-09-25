@@ -1,49 +1,91 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <br/><br/>
-  <div class="container">
-    <div class="row">
-      <div class="col"></div>
-      <div class="col-6">
-        <h1>Welcome to RxBuddy!</h1>
-      </div>
-      <div class="col"></div>
-    </div>
-    <br /><br />
-    <div class="row">
-      <div class="col"></div>
-      <div class="col-6">
-        <div class="shadow p-3 mb-5 bg-white rounded">
-          <form action="" method="POST">
-            <div class="mb-3" style="width:50%;">
-              <label for="InputMedication" class="form-label">Medication Name</label>
-              <input type="text" name="medication" class="form-control" id="InputMedication" aria-describedby="enterMed">
-            </div>
-            <button type="submit" class="btn btn-dark">Show Side Effects</button>
-          </form>
-        </div>
-        <br/> 
-        {% if med_name %}
-          <div class="shadow p-3 mb-5 bg-white rounded">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">Drug Name</th>
-                  <th scope="col">Side Effects</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{ med_name.capitalize() }}</td>
-                  <td>{{ results }}</td>
-                </tr>
-              </tbody>
-            </table>
+<script>
+  $(document).ready(function() {
+    
+    var MaxInputs = 8; //maximum input boxes allowed
+    var InputsWrapper = $("#InputsWrapper"); //Input boxes wrapper ID
+    var AddButton = $("#AddMoreFileBox"); //Add button ID
+    
+    var x = InputsWrapper.length; //initial text box count
+    var FieldCount=1; //to keep track of text box added
+    
+    $(AddButton).click(function (e) {
+      if(x <= MaxInputs) {
+        FieldCount++; //text box added increment
+        //add input box
+        $(InputsWrapper).append('<div class="row"><div class="input-group"><input type="text" placeholder="Enter a drug name" class="form-control name_list" name="drug[]" id="field_'+ FieldCount +''+ FieldCount +'"/><a href="#" class="btn btn-danger removeclass">×</a></div></div>');
+        x++; //text box increment
+      }
+      return false;
+    });
+    
+    $("body").on("click",".removeclass", function(e) { //user click on remove text
+      if( x > 1 ) {
+        $(this).parent('div').remove(); //remove text box
+        x--; //decrement textbox
+      }
+      return false;
+    });
+
+   $('#btnSubmit').click(function (e) {
+      $.ajax({  
+        url:"/",  
+        method:"POST",  
+        data:{ meds:
+          $('#add_med')}, 
+        success: function (data) {  
+          $('#add_med')[0].reset();
+        }
+      });
+      e.preventDefault();
+   });
+  });
+</script>
+<style>
+  .row {padding:10px;}
+</style>
+<br/><br/>
+<div class="container">
+  <h1>Welcome to RxBuddy!</h1>
+  <br/>
+  <div class="shadow p-3 mb-5 bg-white rounded"> 
+    <div class="form-group row">  
+      <form action="" method="POST" name="add_med" id="add_med">  
+        <div id="InputsWrapper">
+          <div class="input-group">
+            <input type="text" name="drug[]" placeholder="Enter a drug name" class="form-control name_list"/>
+            <button type="button" name="add" id="AddMoreFileBox" class="btn btn-success">Add more +</button>
           </div>
-        {% endif %}
-      </div>
-      <div class="col"></div>
+          <br/>
+        </div>
+        <br/>
+        <button type="submit" id="btnSubmit" class="btn btn-dark">View side effects</button> 
+      </form>
     </div>
-  </div>
+  </div> 
+  <br/>
+  {% if meds %}
+    <div class="shadow p-3 mb-5 bg-white rounded">
+      <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Drug Name</th>
+              <th scope="col">Side Effects</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for med, result in meds_side_effects %}
+              <tr>
+                <td>{{ med.capitalize() }}</td>
+                <td>{{ result.capitalize() }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

@@ -48,12 +48,15 @@ def get_side_effects(medication):
 # Index page with the UI
 @app.route("/", methods=["POST", "GET"])
 def index():
-    medication = request.form.get("medication", "")
-    if medication:
-        results = get_side_effects(medication)
-    else:
-        results = "NOT FOUND"
-    return render_template("index.html", results=results, med_name=medication)
+    medications = request.form.getlist('drug[]')
+    results = []
+    medication = None
+    for medication in medications:
+        if medication:
+            results.append(get_side_effects(medication))
+        else:
+            results.append("NOT FOUND")
+    return render_template("index.html", meds_side_effects=zip(medications, results), meds=medications)
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=False)

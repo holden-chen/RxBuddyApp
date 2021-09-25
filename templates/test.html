@@ -1,0 +1,44 @@
+<br/><br/>
+  <div class="container">
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-6">
+        <h1>Welcome to RxBuddy!</h1>
+      </div>
+      <div class="col"></div>
+    </div>
+    <br /><br />
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-6">
+        <div class="shadow p-3 mb-5 bg-white rounded">
+          <form action="" method="POST">
+            <div class="mb-3" style="width:50%;">
+              <label for="InputMedication" class="form-label">Medication Name</label>
+              <input type="text" name="medication" class="form-control" id="InputMedication" aria-describedby="enterMed">
+            </div>
+            <button type="submit" class="btn btn-dark">Show Side Effects</button>
+          </form>
+        </div>
+        {% if med_name %}
+          <div class="shadow p-3 mb-5 bg-white rounded">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Drug Name</th>
+                  <th scope="col">Side Effects</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ med_name.capitalize() }}</td>
+                  <td>{{ results }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col"></div>
+    </div>
+  </div>
