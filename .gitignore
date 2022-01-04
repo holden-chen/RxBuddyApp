@@ -1,5 +1,7 @@
 .env
-
+app.yaml
+__pycache__/
+.gloudignore
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,osx
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode,osx
 
