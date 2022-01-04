@@ -1,48 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script>
-  $(document).ready(function() {
-    
-    var MaxInputs = 8; //maximum input boxes allowed
-    var InputsWrapper = $("#InputsWrapper"); //Input boxes wrapper ID
-    var AddButton = $("#AddMoreFileBox"); //Add button ID
-    
-    var x = InputsWrapper.length; //initial text box count
-    var FieldCount=1; //to keep track of text box added
-    
-    $(AddButton).click(function (e) {
-      if(x <= MaxInputs) {
-        FieldCount++; //text box added increment
-        //add input box
-        $(InputsWrapper).append('<div class="row"><div class="input-group"><input type="text" placeholder="Enter a drug name" class="form-control name_list" name="drug[]" id="field_'+ FieldCount +''+ FieldCount +'"/><a href="#" class="btn btn-danger removeclass">×</a></div></div>');
-        x++; //text box increment
-      }
-      return false;
-    });
-    
-    $("body").on("click",".removeclass", function(e) { //user click on remove text
-      if( x > 1 ) {
-        $(this).parent('div').remove(); //remove text box
-        x--; //decrement textbox
-      }
-      return false;
-    });
-
-   $('#btnSubmit').click(function (e) {
-      $.ajax({  
-        url:"/",  
-        method:"POST",  
-        data:{ meds:
-          $('#add_med')}, 
-        success: function (data) {  
-          $('#add_med')[0].reset();
-        }
-      });
-      e.preventDefault();
-   });
-  });
-</script>
 <style>
   .row {padding:10px;}
 </style>
@@ -50,23 +8,31 @@
 <div class="container">
   <h1>Welcome to RxBuddy!</h1>
   <br/>
-  <div class="shadow p-3 mb-5 bg-white rounded"> 
-    <div class="form-group row">  
-      <form action="" method="POST" name="add_med" id="add_med">  
-        <div id="InputsWrapper">
-          <div class="input-group">
-            <input type="text" name="drug[]" placeholder="Enter a drug name" class="form-control name_list"/>
-            <button type="button" name="add" id="AddMoreFileBox" class="btn btn-success">Add more +</button>
-          </div>
-          <br/>
-        </div>
-        <br/>
-        <button type="submit" id="btnSubmit" class="btn btn-dark">View side effects</button> 
-      </form>
-    </div>
+  <div class="shadow p-3 mb-5 bg-white rounded">  
+    <form action="" method="POST" name="search_drugs" id="search_drugs">  
+      <div class="form-group">
+        <input type="text" name="drug_1" placeholder="Drug #1" class="form-control name_list"/>
+      </div>
+      <div class="form-group">
+        <input type="text" name="drug_2" placeholder="Drug #2" class="form-control name_list"/>
+      </div>
+      <div class="form-group">
+        <input type="text" name="drug_3" placeholder="Drug #3" class="form-control name_list"/>
+      </div>
+      <div class="form-group">
+        <input type="text" name="drug_4" placeholder="Drug #4" class="form-control name_list"/>
+      </div>
+      <br/>
+      <button type="submit" class="btn btn-dark">View side effects</button>
+      <br/>
+      <div>
+        <p>Do not rely on this tool to make decisions regarding medical care. Always speak to your health provider about the risks and benefits of FDA-regulated drugs.</p>
+        <p>Data provided by the U.S. Food and Drug Administration (<a href="https://open.fda.gov">https://open.fda.gov</a>)</p>
+      </div>
+    </form>
   </div> 
   <br/>
-  {% if meds %}
+  {% if drug_dict %}
     <div class="shadow p-3 mb-5 bg-white rounded">
       <table class="table table-striped">
           <thead>
@@ -76,11 +42,15 @@
             </tr>
           </thead>
           <tbody>
-            {% for med, result in meds_side_effects %}
-              <tr>
-                <td>{{ med.capitalize() }}</td>
-                <td>{{ result.capitalize() }}</td>
-              </tr>
+            {% for drug in drug_dict %}
+              {% if drug == "" %}
+                {{ continue }}
+              {% else %}
+                <tr>
+                  <td>{{ drug.capitalize() }}</td>
+                  <td>{{ drug_dict[drug] }}</td>
+                </tr>
+              {% endif %}
             {% endfor %}
           </tbody>
         </table>
